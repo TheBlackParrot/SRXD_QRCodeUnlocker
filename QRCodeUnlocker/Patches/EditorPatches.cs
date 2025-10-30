@@ -59,6 +59,14 @@ internal static class EditorPatches
 
         _trackURLInputFieldTransform = trackURLInputArea.Find("InputField (TMP)");
         XDInputField inputField = _trackURLInputFieldTransform.GetComponent<XDInputField>();
+        inputField.tmpField.characterLimit = 2332; // QR code renders empty past this point
+        CustomTextMeshProUGUI? tmp = _trackURLInputFieldTransform.Find("Text Area/Text")?.GetComponent<CustomTextMeshProUGUI>();
+        if (tmp != null)
+        {
+            tmp.fontSizeMin = 8;
+            tmp.fontSizeMax = 8;
+            tmp.fontSize = 8;
+        }
         
         inputField.tmpField.SetText(string.Empty);
         inputField.tmpField.OnStoppedEditing += () =>

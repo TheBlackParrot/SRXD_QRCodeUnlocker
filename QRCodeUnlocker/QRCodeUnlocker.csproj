@@ -4,7 +4,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <AssemblyName>QRCodeUnlocker</AssemblyName>
         <Product>QRCodeUnlocker</Product>
-        <Version>0.0.0</Version>
+        <Version>0.0.1</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <RestoreAdditionalProjectSources>
@@ -55,6 +55,9 @@
         </Reference>
         <Reference Include="SSD.Game">
             <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\SSD.Game.dll</HintPath>
+        </Reference>
+        <Reference Include="SSD.PlayerServiceManager">
+            <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\SSD.PlayerServiceManager.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.UI">
             <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\UnityEngine.UI.dll</HintPath>

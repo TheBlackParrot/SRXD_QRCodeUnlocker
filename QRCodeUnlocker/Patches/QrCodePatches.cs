@@ -6,7 +6,6 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using QRCoder;
 using SpinCore.UI;
-using UnityEngine;
 
 namespace QRCodeUnlocker.Patches;
 
@@ -69,7 +68,7 @@ internal static class QrCodePatches
         modal.message = $"This will open the following URL in your web browser:<br><b>{__instance.payload}</b>";
         modal.affirmativeCallback += () =>
         {
-            Application.OpenURL(__instance.payload);
+            PlayerServiceManager.Instance.OpenURL(__instance.payload, true);
         };
         modal.cancelCallback += () => { };
         

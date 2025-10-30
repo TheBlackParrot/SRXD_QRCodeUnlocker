@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Threading.Tasks;
 using HarmonyLib;
 using JetBrains.Annotations;
 using QRCoder;
 using SpinCore.UI;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace QRCodeUnlocker.Patches;
 
@@ -83,18 +86,12 @@ internal static class QrCodePatches
     // ReSharper disable once InconsistentNaming
     private static bool ClipInfoEditorPanel_HandleSaveButton_Patch(ClipInfoEditorPanel __instance)
     {
-        string text = _trackURLInputFieldTransform?.GetComponent<CustomTextMeshProUGUI>().text ?? string.Empty;
-        if (!string.IsNullOrEmpty(text))
-        {
-            // there's a weird 0x200b character added in if i'm not removing it here
-            text = text[..^1];
-        }
-
+        string text = _trackURLInputFieldTransform?.GetComponent<XDInputField>().tmpField.text ?? string.Empty;
         __instance.CurrentTrackInfo.spotifyLink = text;
+        
         return true;
     }
-
-    // TODO: currently doesn't update when bringing up the details panel, shit borken
+    
     [HarmonyPatch(typeof(ClipInfoEditorPanel), nameof(ClipInfoEditorPanel.OnEnable))]
     [HarmonyPostfix]
     // ReSharper disable once InconsistentNaming
@@ -103,9 +100,6 @@ internal static class QrCodePatches
         Transform? trackURLTransform = __instance.trackDetailsPanel.transform.Find("TrackURL");
         if (trackURLTransform != null)
         {
-            if (_trackURLInputFieldTransform != null)
-                _trackURLInputFieldTransform.GetComponent<CustomTextMeshProUGUI>().text =
-                    __instance.CurrentTrackInfo?.spotifyLink ?? string.Empty;
             return;
         }
         
@@ -136,7 +130,36 @@ internal static class QrCodePatches
         trackURLTitle.name = "TrackURLTitle";
         trackURLTitle.GetComponent<TranslatedTextMeshPro>().SetTranslationKey($"{nameof(QRCodeUnlocker)}_TrackURLLabel");
 
-        _trackURLInputFieldTransform = trackURLInputArea.Find("InputField (TMP)/Text Area/Text");
-        _trackURLInputFieldTransform.GetComponent<CustomTextMeshProUGUI>().text = __instance.CurrentTrackInfo?.spotifyLink ?? string.Empty;
+        _trackURLInputFieldTransform = trackURLInputArea.Find("InputField (TMP)");
+        XDInputField inputField = _trackURLInputFieldTransform.GetComponent<XDInputField>();
+        
+        inputField.tmpField.SetText(string.Empty);
+        inputField.tmpField.OnStoppedEditing += () =>
+        {
+            if (inputField.tmpField.textWhenStartedEditing != inputField.tmpField.text)
+            {
+                __instance.CurrentTrackInfo.SetDirty();
+            }
+        };
+    }
+
+    [HarmonyPatch(typeof(TrackEditorGUI), nameof(TrackEditorGUI.OnEditClipInfoPressed))]
+    [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
+    private static void TrackEditorGUI_OnEditClipInfoPressed_Patch(TrackEditorGUI __instance)
+    {
+        if (__instance.trackDataToEdit == null)
+        {
+            Plugin.Log.LogWarning("__instance.trackDataToEdit is null");
+            return;
+        }
+        if (_trackURLInputFieldTransform == null)
+        {
+            Plugin.Log.LogWarning("_trackURLInputFieldTransform is null");
+            return;
+        }
+
+        string link = __instance.trackDataToEdit.GetInfoRefForFirstSegment().asset.spotifyLink;
+        _trackURLInputFieldTransform.GetComponent<XDInputField>().tmpField.SetText(link);
     }
 }

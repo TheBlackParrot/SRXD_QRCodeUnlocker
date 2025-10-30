@@ -65,7 +65,11 @@ internal static class QrCodePatches
         }
         
         ModalMessageDialog.ModalMessage? modal = ModalMessageDialogExtensions.CreateYesNo();
+        
         modal.message = $"This will open the following URL in your web browser:<br><b>{__instance.payload}</b>";
+        modal.cancelText = new TranslationReference("Cancel", false);
+        modal.affirmativeText = new TranslationReference("Okay", false);
+        
         modal.affirmativeCallback += () =>
         {
             PlayerServiceManager.Instance.OpenURL(__instance.payload, true);

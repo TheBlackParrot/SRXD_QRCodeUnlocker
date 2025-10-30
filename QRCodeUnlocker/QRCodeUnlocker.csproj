@@ -27,7 +27,7 @@
         <DebugType>none</DebugType>
         <DebugSymbols>false</DebugSymbols>
         <Optimize>true</Optimize>
-        <NoWarn>1701;1702;0162</NoWarn>
+        <NoWarn>1701;1702;0162;MSB3277</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Spin Rhythm')">

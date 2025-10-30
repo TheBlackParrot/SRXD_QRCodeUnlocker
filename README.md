@@ -10,7 +10,3 @@ Mod for Spin Rhythm XD that:
 ---
 
 ![Screenshot of what QRCodeUnlocker adds/changes to the game](Assets/screenshot.png)
-
----
-
-(currently wip, most stuff works! just not some stuff with updating the editor field (sad))

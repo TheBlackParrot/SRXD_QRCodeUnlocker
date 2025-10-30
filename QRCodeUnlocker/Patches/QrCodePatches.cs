@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection.Emit;
-using System.Threading.Tasks;
 using HarmonyLib;
 using JetBrains.Annotations;
 using QRCoder;
 using SpinCore.UI;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace QRCodeUnlocker.Patches;
 
@@ -43,10 +40,12 @@ internal static class QrCodeTranspiler
         {
             // ldarg_0, ldsfld, stfld
             codes.RemoveRange(foundIndex - 1, 3);
+#if DEBUG
             foreach (CodeInstruction t in codes)
             {
                 Plugin.Log.LogInfo($"{t.opcode}: {t.operand}");
             }
+#endif
         }
 
         return codes.AsEnumerable();
